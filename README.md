@@ -2,65 +2,67 @@
                                         字符串实验
 
 1.实验目的：
-    掌握字符串的String及其方法的应用，并添加异常处理结构
+   分析学生选课系统，并用GUI实现窗体界面，应用文件保存读取数据，处理相应的异常。
 
 2.要求：  
-    利用字符串处理知识编程完成《长恨歌》古诗的整理对齐工作，并完成下列三个功能：
-    1.每七个汉字加入一个标点符号，奇数时加逗号，偶数是加句号
-    2.允许提供输入参数统计古诗中某个字或词出现的次数
-    3.考虑操作中可能出现的异常，在程序中设计异常处理程序
-
-  输入：汉皇重色思倾国御宇多年求不得杨家有女初长成养在深闺人未识天生丽质难自弃一朝选在君王侧回眸一笑百媚生六宫粉黛无颜色春寒赐浴华清池温泉水滑洗凝脂         侍儿扶起娇无力始是新承恩泽时......
-  输出：汉皇重色思倾国，御宇多年求不得。
-       杨家有女初长成，养在深闺人未识。
-       天生丽质难自弃，一朝选在君王侧。
-  输入内容时，利用main方法中的args数组传递。     
+    为学生创建属性方法，以及角色分配和相应的功能实现。
+    
 3.过程：
-   建立一个字符串把文章放进去，然后把这个字符串定义为数组，为了方便七个字添加一个符号，定义一个字符串的方法StringBuffer,在for循环里面把数组中的元素那出来一个一个判断，判断第n个元素是否满足七个字成为一句，并同时满足为奇数行是加一个“，”，满足偶数行时加‘。/n’,此时调用StringBuffer的方法append来在句子的尾部添加标点符号。把上述功能放在异常处理中，如果出现异常，会抛出异常的提示。用count判断某个字符出现的字数即可完成。
+   首先用GUI创建一个可登陆的登录界面，在入口分为学生和管理员，选择不同的身份进入不同的功能页面，拿学生为例，此时我们把学生名单放在数据库中，不同学生登录对应相应的学号密码即可，成功登陆后进入到可选课程页面，选择完毕后，进入到已选页面，对其课程可以进行退课操作，选课完成后退出系统。
 4.核心代码
-for (int i =0; i <chars.length; i++) {
-			//在被选元素的结尾插入符号
-			s.append(chars[i]);
+           
+	courseTable.setModel(new javax.swing.table.DefaultTableModel(
+	new Object [][] {
 		
-			if ((i+1)%7==0&&(i+1)%2==1||(i+1)%14==0&&(i+1)%2==0) {
-				//i%7等于0并且i为奇数时，在结尾加，
-				if((i+1)%7==0&&(i+1)%2==1)
-					s.append(",");
-				
-				//i%14等于0并且i为偶数时，在结尾加。
-				else
-					s.append("。\n");
-			}
-			}
-		System.out.println(s.toString());
-    }
+	},
+	new String [] {
+		"课程编号", "课程名称", "上课时间", "任课老师", "课程容量", "已选人数"
+	}
+) 
+       
+       {boolean[] canEdit = new boolean [] {
+		false, false, false, false, false, false
+	};
 
-while(ss.indexOf(string)!=-1){//查找字串中指定字符首次出现的位置
-			//返回一个新字符串，它是此字符串的一个子字符串。
-			ss = ss.substring(ss.indexOf(string)+1,ss.length());    
-            count++;
-            
-            
-    try{
-		char[] chars = ss.toCharArray();//定义数组
-		         ..........
-		//异常处理
-		catch(Exception   e){
-			System.out.print("发生异常:"+e.toString());
-			e.printStackTrace();
+	public boolean isCellEditable(int rowIndex, int columnIndex) {
+		return canEdit [columnIndex];
+	}
+      });jScrollPane1.setViewportView(courseTable);
+
+    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+    getContentPane().setLayout(layout);
+    layout.setHorizontalGroup(
+    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup()}
+    
+    //退课系统
+    private void jb_selectionCancelActionPerformed(
+			
+			java.awt.event.ActionEvent evt) {
+		if (courseId==-1) {
+			JOptionPane.showMessageDialog(this, "请选择一门课程！");
+			return;
+		}
+		int n = JOptionPane.showConfirmDialog(this, "确定要退选该门课程吗?");
+		if (n == 0) {
+			Connection con = null;
+			int currentSno = LogOnFrm.currentStudent.getSno();
+			Selection selection = new Selection(courseId, currentSno);
+			try {
+				con = dbUtil.getCon();
+				int selectionNum = selectionDao.SelectionCancel(con, selection);
+				int selectedNum = selectionDao.NumSelectedMinus(con, courseId);
+				if (selectionNum == 1 && selectedNum == 1) {
+					JOptionPane.showMessageDialog(this, "退选成功!");
+					this.fillTable(new Course());
+				} else {
+					JOptionPane.showMessageDialog(this, "退选失败!");
+				}
+    //退出系统
+    private void jmiExitActionPerformed(java.awt.event.ActionEvent evt) {
+		int result = JOptionPane.showConfirmDialog(this, "是否退出系统");
+		if (result == 0) {
+			this.dispose();
 		}
 	}
-5.运行结果：
-
-       汉皇重色思倾国，御宇多年求不得。
-       
-       杨家有女初长成，养在深闺人未识。
-       
-       天生丽质难自弃，一朝选在君王侧。
-       
-                     .
-                     .
-                     .
-
-6.编程感想：
-在本次实验内容中深度研究题目细节，捋顺逻辑思维，熟练的用到了字符串String的使用方法和处理异常的方法,在StringBuffer下调用了qppend在数组末尾添加任意标注，是我们这次实验的重点。在实验中遇到错误时，通过研究资料与上网查询得以解决，通过这次实验使得自己的大局观与编程思维得到大大提高。
+5.编程感想：
+  本次设计做的是Java的学生选课系统的设计与实现，在软件开发设计过程中，让我对Java有了进一步的了解，极大提高了编程能力。在设计中我深知自己掌握的知识远远不够，掌握的一些理论知识应用到实践中去，总会出现这样或那样的问题，日后我要把学到的知识应用到实际中，多做多练。
